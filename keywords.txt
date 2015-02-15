@@ -1,0 +1,15 @@
+Countimer KEYWORD1
+timer_callback KEYWORD2
+setCounter KEYWORD2
+getCurrentHours KEYWORD2
+getCurrentMinutes KEYWORD2
+getCurrentSeconds KEYWORD2
+getCurrentTime KEYWORD2
+isCounterCompleted KEYWORD2
+isCounterRunning KEYWORD2
+isStopped KEYWORD2
+run KEYWORD2
+start KEYWORD2
+stop KEYWORD2
+pause KEYWORD2
+restart KEYWORD2
