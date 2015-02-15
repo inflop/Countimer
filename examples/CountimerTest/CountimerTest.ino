@@ -1,3 +1,10 @@
+/*
+* To start all timers, open serial monitor tap one of the chars below and click 'Send':
+* 'S' - to start all timers
+* 'P' - to pause all timers
+* 'R' - to restart all timers
+* 'T' - to stop all timers
+*/
 #include "Countimer.h"
 
 Countimer tUp;
@@ -7,28 +14,27 @@ Countimer tNone;
 void setup()
 {
 	Serial.begin(9600);
-
+        
+    // Count-up timer with 10s
 	tUp.setCounter(0, 0, 10, tUp.COUNT_UP, tUpComplete);
+    // Call print_time1() method every 1s.
 	tUp.setInterval(print_time1, 1000);
 
+    // Count-down timer with 21s
 	tDown.setCounter(0, 0, 21, tDown.COUNT_DOWN, tDownComplete);
+    // Call print_time2() method every 1s.
 	tDown.setInterval(print_time2, 1000);
 
+    // No counter
+    // Just call print_none() method every 2s.
 	tNone.setInterval(print_none, 2000);
 }
 
 void loop()
 {
 	tUp.run();
-	tUp.start();
-
 	tDown.run();
-	tDown.start();
-
 	tNone.run();
-	tNone.start();
-
-	//Countimer::delay(10000);
 
 	if (Serial.available() > 0)
 	{
