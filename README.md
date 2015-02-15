@@ -56,4 +56,12 @@ void refreshClock() {
 void onComplete() {
 	Serial.println("Complete!!!");
 }
+
+void loop() {
+	// Run timer
+	timer.run();
+    
+    // Now timer is running but you have to call start() method.
+    timer.start();
+}
 ```
