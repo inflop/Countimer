@@ -15,10 +15,10 @@ The following are public methods for actions:
  * void stop()
  * void pause()
  * void restart()
- 
- 
+
+
  Other methods:
- 
+
  * byte getCurrentHours()
  * byte getCurrentMinutes()
  * byte getCurrentSeconds()
@@ -27,8 +27,8 @@ The following are public methods for actions:
  * bool isCounterCompleted()
  * bool isCounterRunning()
  * bool isStopped()
- 
- 
+
+
 
 And here's some sample code!
 
@@ -39,11 +39,11 @@ Countimer timer;
 
 void setup() {
 	Serial.begin(9600);
-    
+
     // Set up count down timer with 10s and call method onComplete() when timer is complete.
     // 00h:00m:10s
 	timer.setCounter(0, 0, 10, timer.COUNT_DOWN, onComplete);
-    
+
     // Print current time every 1s on serial port by calling method refreshClock().
     timer.setInterval(refreshClock, 1000);
 }
@@ -60,9 +60,11 @@ void onComplete() {
 void loop() {
 	// Run timer
 	timer.run();
-    
+
     // Now timer is running and listening for actions.
     // If you want to start the timer, you have to call start() method.
-    timer.start();
+    if(!timer.isCounterCompleted()) {
+      timer.start();
+    }
 }
 ```
