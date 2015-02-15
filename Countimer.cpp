@@ -142,8 +142,8 @@ void Countimer::countDown()
 {
 	if (_currentCountTime > 0)
 	{
-		_currentCountTime -= _interval;
 		_callback();
+		_currentCountTime -= _interval;
 	}
 	else
 	{
@@ -158,8 +158,8 @@ void Countimer::countUp()
 {
 	if (_currentCountTime < _countTime)
 	{
-		_currentCountTime += _interval;
 		_callback();
+		_currentCountTime += _interval;
 	}
 	else
 	{
