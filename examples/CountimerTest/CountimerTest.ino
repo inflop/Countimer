@@ -1,5 +1,5 @@
 /*
-* To start all timers, open serial monitor tap one of the chars below and click 'Send':
+* Open serial monitor, press one of the chars below and click 'Send':
 * 'S' - to start all timers
 * 'P' - to pause all timers
 * 'R' - to restart all timers
