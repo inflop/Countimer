@@ -1,5 +1,5 @@
 /*
-* Open serial monitor, press one of the chars below and click 'Send':
+* Open serial monitor, press one of the keys below and click 'Send':
 * 'S' - to start all timers
 * 'P' - to pause all timers
 * 'R' - to restart all timers
@@ -28,6 +28,12 @@ void setup()
     // No counter
     // Just call print_none() method every 2s.
 	tNone.setInterval(print_none, 2000);
+
+	Serial.println("Press one of the keys below and click 'Send':");
+	Serial.println("'S' - to start all timers");
+	Serial.println("'P' - to pause all timers");
+	Serial.println("'R' - to restart all timers");
+	Serial.println("'T' - to stop all timers");
 }
 
 void loop()
@@ -42,28 +48,28 @@ void loop()
 
 		switch (c)
 		{
-		case 'T':
-			tUp.stop();
-			tDown.stop();
-			tNone.stop();
-			break;
-		case 'R':
-			tUp.restart();
-			tDown.restart();
-			tNone.restart();
-			break;
-		case 'S':
-			tUp.start();
-			tDown.start();
-			tNone.start();
-			break;
-		case 'P':
-			tUp.pause();
-			tDown.pause();
-			tNone.pause();
-			break;
-		default:
-			break;
+			case 'T':
+				tUp.stop();
+				tDown.stop();
+				tNone.stop();
+				break;
+			case 'R':
+				tUp.restart();
+				tDown.restart();
+				tNone.restart();
+				break;
+			case 'S':
+				tUp.start();
+				tDown.start();
+				tNone.start();
+				break;
+			case 'P':
+				tUp.pause();
+				tDown.pause();
+				tNone.pause();
+				break;
+			default:
+				break;
 		}
 	}
 }
