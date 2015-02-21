@@ -9,7 +9,8 @@
 #include <WProgram.h>
 #endif
 
-#endif
+#define COUNTIMER_MAX_HOURS 99
+#define COUNTIMER_MAX_MINUTES_SECONDS 59
 
 typedef void(*timer_callback)(void);
 
@@ -43,12 +44,13 @@ public:
 	// Returns current timer as formatted string HH:MM:SS
 	char* getCurrentTime();
 
-	// Returns true if counter is competed, otherwise returns false.
+	// Returns true if counter is completed, otherwise returns false.
 	bool isCounterCompleted();
 
 	// Returns true if counter is still running, otherwise returns false.
 	bool isCounterRunning();
 
+	// Returns true if timer is stopped, otherwise returns false.
 	bool isStopped();
 
 	// Run timer. This is main method.
@@ -93,8 +95,6 @@ private:
 	bool _isStopped;
 	char _formatted_time[9];
 	CountType _countType;
-
-	static const uint8_t MAX_HOURS = 99;
-	static const uint8_t MAX_MINUTES_SECONDS = 59;
 };
 
+#endif

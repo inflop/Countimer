@@ -18,16 +18,16 @@ Countimer::~Countimer()
 
 void Countimer::setCounter(uint8_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete)
 {
-	if (hours > MAX_HOURS) {
-		hours = MAX_HOURS;
+	if (hours > COUNTIMER_MAX_HOURS) {
+		hours = COUNTIMER_MAX_HOURS;
 	}
 
-	if (minutes > MAX_MINUTES_SECONDS) {
-		minutes = MAX_MINUTES_SECONDS;
+	if (minutes > COUNTIMER_MAX_MINUTES_SECONDS) {
+		minutes = COUNTIMER_MAX_MINUTES_SECONDS;
 	}
 
-	if (seconds > MAX_MINUTES_SECONDS) {
-		seconds = MAX_MINUTES_SECONDS;
+	if (seconds > COUNTIMER_MAX_MINUTES_SECONDS) {
+		seconds = COUNTIMER_MAX_MINUTES_SECONDS;
 	}
 
 	_onComplete = onComplete;
