@@ -30,6 +30,9 @@ public:
 	// Set up counter time(hours, minutes, seconds), count mode and function to execute if count is completed.
 	void setCounter(uint8_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete);
 
+	// Change existing counter time preset(hours, minutes, seconds).
+	void setCounter(uint8_t hours, uint8_t minutes, uint8_t seconds);
+
 	// Returns timer's current hours.
 	uint8_t getCurrentHours();
 
