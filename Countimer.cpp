@@ -138,7 +138,7 @@ void Countimer::run()
 		}
 		else
 		{
-			_callback();
+			callback();
 		}
 		_previousMillis = millis();
 	}
@@ -148,15 +148,13 @@ void Countimer::countDown()
 {
 	if (_currentCountTime > 0)
 	{
-		_callback();
+		callback();
 		_currentCountTime -= _interval;
 	}
 	else
 	{
 		stop();
-
-		if (_onComplete != NULL)
-			_onComplete();
+		complete();
 	}
 }
 
@@ -164,14 +162,24 @@ void Countimer::countUp()
 {
 	if (_currentCountTime < _countTime)
 	{
-		_callback();
+		callback();
 		_currentCountTime += _interval;
 	}
 	else
 	{
 		stop();
-
-		if (_onComplete != NULL)
-			_onComplete();
+		complete();
 	}
+}
+
+void Countimer::callback()
+{
+	if(_callback != NULL)
+		_callback();
+}
+
+void Countimer::complete()
+{
+	if(_onComplete != NULL)
+		_onComplete();
 }
