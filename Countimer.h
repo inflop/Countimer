@@ -9,7 +9,7 @@
 #include <WProgram.h>
 #endif
 
-#define COUNTIMER_MAX_HOURS 99
+#define COUNTIMER_MAX_HOURS 999
 #define COUNTIMER_MAX_MINUTES_SECONDS 59
 
 typedef void(*timer_callback)(void);
@@ -28,13 +28,13 @@ public:
 	};
 
 	// Set up counter time(hours, minutes, seconds), count mode and function to execute if count is completed.
-	void setCounter(uint8_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete);
+	void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete);
 
 	// Set up counter time(hours, minutes, seconds) for existing timer.
-	void setCounter(uint8_t hours, uint8_t minutes, uint8_t seconds);
+	void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds);
 
 	// Returns timer's current hours.
-	uint8_t getCurrentHours();
+	uint16_t getCurrentHours();
 
 	// Returns timer's current minutes.
 	uint8_t getCurrentMinutes();
@@ -83,14 +83,14 @@ private:
 	void countUp();
 
 	uint32_t _interval = 1;
-	unsigned long _previousMillis;
+	uint32_t _previousMillis;
 
 	// Stores current counter value in milliseconds.
-	unsigned long _currentCountTime;
-	unsigned long _startCountTime;
+	uint32_t _currentCountTime;
+	uint32_t _startCountTime;
 
 	// Stores cached user's time.
-	unsigned long _countTime;
+	uint32_t _countTime;
 
 	// Function to execute.
 	timer_callback _callback;
@@ -99,7 +99,7 @@ private:
 	timer_callback _onComplete;
 	bool _isCounterCompleted;
 	bool _isStopped;
-	char _formatted_time[9];
+	char _formatted_time[10];
 	CountType _countType;
 };
 

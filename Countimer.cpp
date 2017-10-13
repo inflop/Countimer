@@ -16,14 +16,14 @@ Countimer::~Countimer()
 {
 }
 
-void Countimer::setCounter(uint8_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete)
+void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete)
 {
 	_onComplete = onComplete;
 	_countType = countType;
 	setCounter(hours, minutes, seconds);
 }
 
-void Countimer::setCounter(uint8_t hours, uint8_t minutes, uint8_t seconds)
+void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds)
 {
 	if (hours > COUNTIMER_MAX_HOURS) {
 		hours = COUNTIMER_MAX_HOURS;
@@ -56,7 +56,7 @@ void Countimer::setInterval(timer_callback callback, uint32_t interval)
 	_callback = callback;
 }
 
-uint8_t Countimer::getCurrentHours()
+uint16_t Countimer::getCurrentHours()
 {
 	return _currentCountTime / 1000 / 3600;
 }
