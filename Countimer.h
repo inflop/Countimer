@@ -73,13 +73,13 @@ public:
 	void restart();
 
 private:
-	// Counting up timer.
+	// Counting down timer.
 	void countDown();
 	
 	void callback();
 	void complete();
 
-	// Counting down timer.
+	// Counting up timer.
 	void countUp();
 
 	uint32_t _interval = 1;
