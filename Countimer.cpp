@@ -149,7 +149,7 @@ void Countimer::countDown()
 	if (_currentCountTime > 0)
 	{
 		callback();
-		_currentCountTime -= _interval;
+		_currentCountTime -= millis() - _previousMillis;
 	}
 	else
 	{
@@ -163,7 +163,7 @@ void Countimer::countUp()
 	if (_currentCountTime < _countTime)
 	{
 		callback();
-		_currentCountTime += _interval;
+		_currentCountTime += millis() - _previousMillis;
 	}
 	else
 	{
