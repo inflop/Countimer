@@ -82,11 +82,6 @@ bool Countimer::isStopped() const
 	return _isStopped;
 }
 
-bool Countimer::isCounterRunning()
-{
-	return !_isStopped;
-}
-
 void Countimer::start()
 {
 	if(_isStopped)
