@@ -7,6 +7,13 @@
 */
 #include <Countimer.h>
 
+// Generic ESP32 boards (esp32:esp32:esp32 FQBN) don't define LED_BUILTIN in the core,
+// unlike AVR boards where it's always available. Fall back to GPIO2, the onboard LED
+// pin on most ESP32 dev boards, so this sketch compiles on both.
+#ifndef LED_BUILTIN
+#define LED_BUILTIN 2
+#endif
+
 Countimer tUp;
 Countimer tDown;
 Countimer tNone;
