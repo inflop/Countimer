@@ -1,6 +1,9 @@
 Countimer	KEYWORD1
+CountType	KEYWORD1
 timer_callback	KEYWORD2
 setCounter	KEYWORD2
+setInterval	KEYWORD2
+setCalibration	KEYWORD2
 getCurrentHours	KEYWORD2
 getCurrentMinutes	KEYWORD2
 getCurrentSeconds	KEYWORD2
@@ -13,3 +16,6 @@ start	KEYWORD2
 stop	KEYWORD2
 pause	KEYWORD2
 restart	KEYWORD2
+COUNT_NONE	LITERAL1
+COUNT_UP	LITERAL1
+COUNT_DOWN	LITERAL1

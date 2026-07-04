@@ -5,7 +5,7 @@
 * 'R' - to restart all timers
 * 'T' - to stop all timers
 */
-#include "Countimer.h"
+#include <Countimer.h>
 
 Countimer tUp;
 Countimer tDown;
@@ -14,7 +14,9 @@ Countimer tNone;
 void setup()
 {
 	Serial.begin(9600);
-        
+	pinMode(LED_BUILTIN, OUTPUT);
+
+
     // Count-up timer with 10s
 	tUp.setCounter(0, 0, 10, tUp.COUNT_UP, tUpComplete);
     // Call print_time1() method every 1s.
@@ -94,10 +96,10 @@ void print_none()
 
 void tUpComplete()
 {
-	digitalWrite(13, HIGH);
+	digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void tDownComplete()
 {
-	digitalWrite(13, LOW);
+	digitalWrite(LED_BUILTIN, LOW);
 }

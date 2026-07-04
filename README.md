@@ -1,70 +1,194 @@
 # Countimer
 
-This is simple timer and counter Arduino library.  
-Offers three work modes:
+[![CI](https://github.com/inflop/Countimer/actions/workflows/ci.yml/badge.svg)](https://github.com/inflop/Countimer/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/inflop/Countimer)](https://github.com/inflop/Countimer/releases)
+[![License: MIT](https://img.shields.io/github/license/inflop/Countimer)](LICENSE)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/Countimer.svg)](https://www.ardu-badge.com/Countimer)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-assisted-D97757?logo=claude&logoColor=white)](https://claude.com/claude-code)
 
- * Count-up timer with call specified method when count is complete.
- * Count-down timer with call specified method when count is complete.
- * Calling any method at a specified time interval.
+A simple, non-blocking Arduino timer and counter library. Count down, count up, or just
+call a function on a fixed interval — without `delay()`, interrupts, or external dependencies.
 
+## Features
 
-It allows you to start/pause, stop or restart timer.  
-The following are public methods for actions:
+- **Non-blocking** — driven entirely by `millis()` from your `loop()`; no `delay()`, no interrupts.
+- **Three work modes:**
+  - **Count-down** from a set time (up to 999:59:59), with a callback when it reaches zero.
+  - **Count-up** from zero to a set time, with a callback when it completes.
+  - **Interval-only** — call a function every _n_ milliseconds, no counter at all.
+- **Two callbacks per timer** — one fired every interval tick, one fired once on completion.
+- Full control: `start()`, `pause()` (resumable), `restart()`, `stop()`.
+- Accuracy independent of count length and `loop()` load — counting is based on the real
+  measured `millis()` delta, so busy sketches don't accumulate drift.
+- Optional [calibration](#accuracy-and-calibration) of the hardware clock drift.
+- No dependencies, works on any architecture (AVR, ESP8266/ESP32, SAMD, RP2040, …).
 
- * void start()
- * void stop()
- * void pause()
- * void restart()
+## Installation
 
+**Arduino IDE (Library Manager):** open *Sketch → Include Library → Manage Libraries…*,
+search for **Countimer** and click *Install*.
 
- Other methods:
+**arduino-cli:**
 
- * byte getCurrentHours()
- * byte getCurrentMinutes()
- * byte getCurrentSeconds()
- * void setInterval()
- * String getCurrentTime()
- * bool isCounterCompleted()
- * bool isCounterRunning()
- * bool isStopped()
+```sh
+arduino-cli lib install Countimer
+```
 
+**Manually:** download this repository and place it in your Arduino `libraries/` folder
+(e.g. `~/Documents/Arduino/libraries/Countimer`), then restart the IDE.
 
+## Quick start
 
-And here's some sample code!
+A 10-second count-down that prints the remaining time every second:
 
-```c
-#include "Countimer.h"
+```cpp
+#include <Countimer.h>
 
 Countimer timer;
 
 void setup() {
     Serial.begin(9600);
 
-    // Set up count down timer with 10s and call method onComplete() when timer is complete.
-    // 00h:00m:10s
+    // Count down from 00h:00m:10s and call onComplete() when finished.
     timer.setCounter(0, 0, 10, timer.COUNT_DOWN, onComplete);
 
-    // Print current time every 1s on serial port by calling method refreshClock().
-    timer.setInterval(refreshClock, 1000);
-}
+    // Call printTime() every 1000 ms while the timer is running.
+    timer.setInterval(printTime, 1000);
 
-void refreshClock() {
-    Serial.print("Current count time is: ");
-    Serial.println(timer.getCurrentTime());
-}
-
-void onComplete() {
-    Serial.println("Complete!!!");
+    // Nothing happens until the timer is started.
+    timer.start();
 }
 
 void loop() {
-    // Run timer
+    // run() is the heartbeat — it must be called on every loop() iteration.
     timer.run();
+}
 
-    // Now timer is running and listening for actions.
-    // If you want to start the timer, you have to call start() method.
-    if(!timer.isCounterCompleted()) {
-      timer.start();
-    }
+void printTime() {
+    Serial.println(timer.getCurrentTime());  // e.g. "00:00:07"
+}
+
+void onComplete() {
+    Serial.println("Complete!");
 }
 ```
+
+## Usage
+
+### Work modes
+
+The mode is selected by the `CountType` passed to `setCounter()` — or by not calling
+`setCounter()` at all:
+
+```cpp
+// Count-down: 5 minutes -> 00:00:00, then onComplete() fires once.
+timer.setCounter(0, 5, 0, timer.COUNT_DOWN, onComplete);
+
+// Count-up: 00:00:00 -> 5 minutes, then onComplete() fires once.
+timer.setCounter(0, 5, 0, timer.COUNT_UP, onComplete);
+
+// Interval-only: no counter, just call blink() every 500 ms until stopped.
+// (Only setInterval() is configured — no setCounter().)
+timer.setInterval(blink, 500);
+```
+
+Hours are clamped to 999, minutes and seconds to 59, so the longest count is `999:59:59`.
+
+The 3-argument `setCounter(hours, minutes, seconds)` overload re-programs the time of an
+already configured timer while keeping its mode and completion callback.
+
+### Controlling the timer
+
+```cpp
+timer.start();    // start, or resume after pause()
+timer.pause();    // freeze; time spent paused is NOT counted
+timer.restart();  // reset to the initial time and start again
+timer.stop();     // finish: mark completed and reset to the initial time
+```
+
+Calling `start()` repeatedly (e.g. on every `loop()` iteration) is harmless — it only acts
+on an actual stopped-to-running transition.
+
+### Reading the time and state
+
+```cpp
+timer.getCurrentTime();     // "HH:MM:SS" as char*
+timer.getCurrentHours();    // uint16_t
+timer.getCurrentMinutes();  // uint8_t
+timer.getCurrentSeconds();  // uint8_t
+
+timer.isCounterRunning();   // true while counting
+timer.isStopped();          // true when stopped or paused
+timer.isCounterCompleted(); // true once the count has finished
+```
+
+> **Note:** `getCurrentTime()` returns a pointer to an internal buffer that is overwritten
+> on the next call — print or copy it immediately, don't store the pointer.
+
+## Accuracy and calibration
+
+The counter is driven by the real measured `millis()` delta, so its accuracy does not degrade
+with longer count times, regardless of how busy your `loop()` is.
+
+The remaining error source is the hardware clock itself — boards with a ceramic resonator
+(most Uno/Nano clones) can drift up to ~0.5% against a real clock. You can compensate for it
+with a one-time, per-board calibration:
+
+```cpp
+// Run a long count (e.g. 1 hour) against a reference clock, then:
+// factor = real_elapsed_seconds / timer_indicated_seconds
+timer.setCalibration(1.001);  // timer was running ~3.6s/h too slow
+```
+
+The default factor is `1.0` (no correction).
+
+## API reference
+
+| Method | Description |
+|---|---|
+| `void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete)` | Configure the count time, mode (`COUNT_DOWN` / `COUNT_UP` / `COUNT_NONE`) and the function called once when the count completes. |
+| `void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds)` | Re-program the count time of an already configured timer. |
+| `void setInterval(timer_callback callback, uint32_t interval)` | Call `callback` every `interval` milliseconds while the timer is running. |
+| `void setCalibration(float factor)` | Correct hardware `millis()` drift; `factor = real_elapsed_time / timer_indicated_time`, default `1.0`. |
+| `void run()` | Heartbeat — must be called on every `loop()` iteration. |
+| `void start()` | Start the timer, or resume it after `pause()`. |
+| `void pause()` | Pause the timer; paused time is not counted. Resume with `start()`. |
+| `void restart()` | Reset to the initial time and start again. |
+| `void stop()` | Finish the count: mark it completed and reset to the initial time. |
+| `char* getCurrentTime()` | Current time formatted as `HH:MM:SS` (pointer to an internal buffer). |
+| `uint16_t getCurrentHours() const` | Current hours component. |
+| `uint8_t getCurrentMinutes() const` | Current minutes component. |
+| `uint8_t getCurrentSeconds() const` | Current seconds component. |
+| `bool isCounterRunning() const` | `true` while the counter is running. |
+| `bool isStopped() const` | `true` when the timer is stopped or paused. |
+| `bool isCounterCompleted() const` | `true` once the count has finished. |
+
+`timer_callback` is a plain `void (*)(void)` function pointer.
+
+## Examples
+
+| Sketch | Shows |
+|---|---|
+| [`examples/Basic`](examples/Basic/Basic.ino) | Minimal count-down timer — the quick start above as a sketch. |
+| [`examples/Advanced`](examples/Advanced/Advanced.ino) | Count-up, pause/resume over serial, state queries, re-programming the time, calibration. |
+| [`examples/CountimerTest`](examples/CountimerTest/CountimerTest.ino) | All three modes running side by side, controlled with serial keys `S`/`P`/`R`/`T`. |
+
+## Compatibility
+
+The library only depends on `millis()`, so it runs on any Arduino-compatible core
+(`architectures=*`). CI compiles the examples for AVR (`arduino:avr:uno`) and
+ESP32 (`esp32:esp32:esp32`).
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
+## Contributing
+
+Bug reports and pull requests are welcome on
+[GitHub](https://github.com/inflop/Countimer/issues) — see
+[CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+This library is released under the [MIT License](LICENSE).
