@@ -13,7 +13,9 @@ touches `src/` or `examples/`; never defer to CI what can be checked in seconds 
 
 ## Bootstrap (once per machine)
 
-Check first: `arduino-cli version`. If missing, install (Windows):
+Check first: `arduino-cli version`. If missing, install:
+
+**Windows:**
 
 ```powershell
 winget install --id ArduinoSA.CLI --accept-source-agreements --accept-package-agreements
@@ -23,7 +25,17 @@ The MSI installs to `C:\Program Files\Arduino CLI\arduino-cli.exe` and `winget` 
 refresh the current shell's `PATH` — in the installing session invoke the binary by that
 full path; new shells will have it on `PATH`.
 
-Then install the AVR core (once):
+**Linux:**
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
+```
+
+Without `BINDIR`, the script installs to `./bin` in the current directory instead of
+somewhere on `PATH` — pass it explicitly (`/usr/local/bin` needs `sudo sh` at the end;
+use `BINDIR=~/.local/bin` to install without root, assuming that's already on `PATH`).
+
+Then install the AVR core (once, same for both platforms):
 
 ```sh
 arduino-cli core update-index
@@ -55,7 +67,7 @@ verified — do not commit.
 
 | Symptom | Cause / fix |
 |---|---|
-| `arduino-cli: command not found` after install | Stale `PATH` in current shell — use the full path from Bootstrap above. |
+| `arduino-cli: command not found` after install | Windows: stale `PATH` in current shell — use the full path from Bootstrap above. Linux: installed to `./bin` because `BINDIR` wasn't set — re-run with `BINDIR` pointing at a directory on `PATH`. |
 | `Platform 'arduino:avr' not found` | Run the two `core` commands from Bootstrap. |
 | `Countimer.h: No such file or directory` | Not run from repo root, or `--library .` missing. |
 | `undefined reference to 'Countimer::…'` | Method declared in `src/Countimer.h` but not defined in `src/Countimer.cpp` — fix the source, see the check-api-sync skill. |
