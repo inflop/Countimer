@@ -84,6 +84,11 @@ public:
 	// Restart timer.
 	void restart();
 
+	// Reset timer to its initial time and leave it stopped (not completed),
+	// ready to be started again with start(). Unlike restart() it does not
+	// start counting, and unlike stop() it does not mark the counter completed.
+	void reset();
+
 private:
 	// Counting down timer by measured elapsed milliseconds.
 	void countDown(uint32_t elapsed);

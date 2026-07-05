@@ -144,14 +144,18 @@ void Countimer::stop()
 
 void Countimer::restart()
 {
-	_currentCountTime = _startCountTime;
-	_isCounterCompleted = false;
-
-	// Force start() to reset the time reference point,
-	// even when restarting a running timer.
-	_isStopped = true;
-
+	// reset() leaves the timer stopped at its initial time; start() then resumes
+	// it, resetting the time reference point even when restarting a running timer.
+	reset();
 	start();
+}
+
+void Countimer::reset()
+{
+	_currentCountTime = _startCountTime;
+	_isStopped = true;
+	_isCounterCompleted = false;
+	_calibrationRemainder = 0.0;
 }
 
 void Countimer::run()

@@ -17,7 +17,7 @@ call a function on a fixed interval — without `delay()`, interrupts, or extern
   - **Count-up** from zero to a set time, with a callback when it completes.
   - **Interval-only** — call a function every _n_ milliseconds, no counter at all.
 - **Two callbacks per timer** — one fired every interval tick, one fired once on completion.
-- Full control: `start()`, `pause()` (resumable), `restart()`, `stop()`.
+- Full control: `start()`, `pause()` (resumable), `restart()`, `reset()`, `stop()`.
 - Accuracy independent of count length and `loop()` load — counting is based on the real
   measured `millis()` delta, so busy sketches don't accumulate drift.
 - Optional [calibration](#accuracy-and-calibration) of the hardware clock drift.
@@ -110,6 +110,7 @@ timer.setCounter(0, 0, 1, 500, timer.COUNT_DOWN, onComplete);
 timer.start();    // start, or resume after pause()
 timer.pause();    // freeze; time spent paused is NOT counted
 timer.restart();  // reset to the initial time and start again
+timer.reset();    // reset to the initial time and stay stopped, ready to start()
 timer.stop();     // finish: mark completed and reset to the initial time
 ```
 
@@ -165,6 +166,7 @@ The default factor is `1.0` (no correction).
 | `void start()` | Start the timer, or resume it after `pause()`. |
 | `void pause()` | Pause the timer; paused time is not counted. Resume with `start()`. |
 | `void restart()` | Reset to the initial time and start again. |
+| `void reset()` | Reset to the initial time and leave the timer stopped (not completed), ready to `start()`. |
 | `void stop()` | Finish the count: mark it completed and reset to the initial time. |
 | `char* getCurrentTime()` | Current time formatted as `HH:MM:SS` (pointer to an internal buffer). |
 | `char* getCurrentTimeWithMillis()` | Current time formatted as `HH:MM:SS.mmm` (pointer to an internal buffer, separate from `getCurrentTime()`'s). |

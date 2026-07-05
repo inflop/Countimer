@@ -3,6 +3,7 @@
 * 'S' - to start all timers
 * 'P' - to pause all timers
 * 'R' - to restart all timers
+* 'E' - to reset all timers (back to initial time, left stopped)
 * 'T' - to stop all timers
 */
 #include <Countimer.h>
@@ -48,6 +49,7 @@ void setup()
 	Serial.println("'S' - to start all timers");
 	Serial.println("'P' - to pause all timers");
 	Serial.println("'R' - to restart all timers");
+	Serial.println("'E' - to reset all timers (back to initial time, left stopped)");
 	Serial.println("'T' - to stop all timers");
 }
 
@@ -75,6 +77,12 @@ void loop()
 				tDown.restart();
 				tNone.restart();
 				tSubSecond.restart();
+				break;
+			case 'E':
+				tUp.reset();
+				tDown.reset();
+				tNone.reset();
+				tSubSecond.reset();
 				break;
 			case 'S':
 				tUp.start();
