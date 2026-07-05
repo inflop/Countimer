@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = 'build/CountimerTest.ino.hex'
+elf = 'build/CountimerTest.ino.elf'
