@@ -173,6 +173,11 @@ The default factor is `1.0` (no correction).
 | [`examples/Advanced`](examples/Advanced/Advanced.ino) | Count-up, pause/resume over serial, state queries, re-programming the time, calibration. |
 | [`examples/CountimerTest`](examples/CountimerTest/CountimerTest.ino) | All three modes running side by side, controlled with serial keys `S`/`P`/`R`/`T`. |
 
+Don't have a board handy? Every example above can also be run in the
+[Wokwi](https://wokwi.com/) simulator (e.g. via the "Wokwi Simulator" VS Code extension) using
+the `wokwi.toml`/`diagram.json` in its folder — see
+[CONTRIBUTING.md](CONTRIBUTING.md#running-examples-in-the-wokwi-simulator) for the full steps.
+
 ## Compatibility
 
 The library only depends on `millis()`, so it runs on any Arduino-compatible core
