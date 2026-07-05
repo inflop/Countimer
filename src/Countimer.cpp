@@ -2,12 +2,22 @@
 
 void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete)
 {
+	setCounter(hours, minutes, seconds, 0, countType, onComplete);
+}
+
+void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds, CountType countType, timer_callback onComplete)
+{
 	_onComplete = onComplete;
 	_countType = countType;
-	setCounter(hours, minutes, seconds);
+	setCounter(hours, minutes, seconds, milliseconds);
 }
 
 void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds)
+{
+	setCounter(hours, minutes, seconds, 0);
+}
+
+void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds)
 {
 	if (hours > COUNTIMER_MAX_HOURS) {
 		hours = COUNTIMER_MAX_HOURS;
@@ -21,7 +31,11 @@ void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds)
 		seconds = COUNTIMER_MAX_MINUTES_SECONDS;
 	}
 
-	_currentCountTime = ((hours * 3600L) + (minutes * 60L) + seconds) * 1000L;
+	if (milliseconds > COUNTIMER_MAX_MILLISECONDS) {
+		milliseconds = COUNTIMER_MAX_MILLISECONDS;
+	}
+
+	_currentCountTime = ((hours * 3600L) + (minutes * 60L) + seconds) * 1000L + milliseconds;
 	_countTime = _currentCountTime;
 
 	if (_countType == COUNT_UP)
@@ -60,11 +74,23 @@ uint8_t Countimer::getCurrentSeconds() const
 	return _currentCountTime / 1000 % 60;
 }
 
+uint16_t Countimer::getCurrentMilliseconds() const
+{
+	return _currentCountTime % 1000;
+}
+
 char* Countimer::getCurrentTime()
 {
 	snprintf(_formatted_time, sizeof(_formatted_time), "%02u:%02u:%02u",
 		(unsigned int)getCurrentHours(), (unsigned int)getCurrentMinutes(), (unsigned int)getCurrentSeconds());
 	return _formatted_time;
+}
+
+char* Countimer::getCurrentTimeWithMillis()
+{
+	snprintf(_formatted_time_ms, sizeof(_formatted_time_ms), "%02u:%02u:%02u.%03u",
+		(unsigned int)getCurrentHours(), (unsigned int)getCurrentMinutes(), (unsigned int)getCurrentSeconds(), (unsigned int)getCurrentMilliseconds());
+	return _formatted_time_ms;
 }
 
 bool Countimer::isCounterCompleted() const
@@ -132,7 +158,9 @@ void Countimer::run()
 {
 	// timer is running only if is not completed or not stopped.
 	if (_isCounterCompleted || _isStopped)
+	{
 		return;
+	}
 
 	uint32_t now = millis();
 	// Unsigned subtraction is safe across millis() overflow (~49 days).

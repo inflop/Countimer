@@ -97,6 +97,13 @@ Hours are clamped to 999, minutes and seconds to 59, so the longest count is `99
 The 3-argument `setCounter(hours, minutes, seconds)` overload re-programs the time of an
 already configured timer while keeping its mode and completion callback.
 
+For sub-second precision, pass an extra `milliseconds` (0-999) argument:
+
+```cpp
+// Count down 1.5 s, then onComplete() fires once.
+timer.setCounter(0, 0, 1, 500, timer.COUNT_DOWN, onComplete);
+```
+
 ### Controlling the timer
 
 ```cpp
@@ -112,10 +119,12 @@ on an actual stopped-to-running transition.
 ### Reading the time and state
 
 ```cpp
-timer.getCurrentTime();     // "HH:MM:SS" as char*
-timer.getCurrentHours();    // uint16_t
-timer.getCurrentMinutes();  // uint8_t
-timer.getCurrentSeconds();  // uint8_t
+timer.getCurrentTime();            // "HH:MM:SS" as char*
+timer.getCurrentTimeWithMillis();  // "HH:MM:SS.mmm" as char*
+timer.getCurrentHours();           // uint16_t
+timer.getCurrentMinutes();         // uint8_t
+timer.getCurrentSeconds();         // uint8_t
+timer.getCurrentMilliseconds();    // uint16_t (0-999)
 
 timer.isCounterRunning();   // true while counting
 timer.isStopped();          // true when stopped or paused
@@ -147,7 +156,9 @@ The default factor is `1.0` (no correction).
 | Method | Description |
 |---|---|
 | `void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete)` | Configure the count time, mode (`COUNT_DOWN` / `COUNT_UP` / `COUNT_NONE`) and the function called once when the count completes. |
+| `void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds, CountType countType, timer_callback onComplete)` | Same as above, with an additional sub-second component (0-999 ms). |
 | `void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds)` | Re-program the count time of an already configured timer. |
+| `void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds)` | Same as above, with an additional sub-second component (0-999 ms). |
 | `void setInterval(timer_callback callback, uint32_t interval)` | Call `callback` every `interval` milliseconds while the timer is running. |
 | `void setCalibration(float factor)` | Correct hardware `millis()` drift; `factor = real_elapsed_time / timer_indicated_time`, default `1.0`. |
 | `void run()` | Heartbeat — must be called on every `loop()` iteration. |
@@ -156,9 +167,11 @@ The default factor is `1.0` (no correction).
 | `void restart()` | Reset to the initial time and start again. |
 | `void stop()` | Finish the count: mark it completed and reset to the initial time. |
 | `char* getCurrentTime()` | Current time formatted as `HH:MM:SS` (pointer to an internal buffer). |
+| `char* getCurrentTimeWithMillis()` | Current time formatted as `HH:MM:SS.mmm` (pointer to an internal buffer, separate from `getCurrentTime()`'s). |
 | `uint16_t getCurrentHours() const` | Current hours component. |
 | `uint8_t getCurrentMinutes() const` | Current minutes component. |
 | `uint8_t getCurrentSeconds() const` | Current seconds component. |
+| `uint16_t getCurrentMilliseconds() const` | Current sub-second component (0-999). |
 | `bool isCounterRunning() const` | `true` while the counter is running. |
 | `bool isStopped() const` | `true` when the timer is stopped or paused. |
 | `bool isCounterCompleted() const` | `true` once the count has finished. |

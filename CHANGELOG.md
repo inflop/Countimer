@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2026-07-04
+## [1.1.0] - 2026-07-05
+
+### Added
 
 ### Fixed
 
@@ -30,6 +32,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Millisecond precision.** `setCounter()` now has overloads accepting a `milliseconds`
+  (0-999) argument, so counts can be configured with sub-second precision (e.g. a 1.5 s
+  countdown).
+  (#22)
+- New `getCurrentMilliseconds()` and `getCurrentTimeWithMillis()` (formatted
+  `HH:MM:SS.mmm`) read it back. Existing overloads and `getCurrentTime()` are unchanged.
+  (#15)
 - `setCalibration(float factor)` — optional one-time, per-board correction of hardware
   `millis()` drift (e.g. ceramic resonator tolerance, up to ~0.5% on many Uno/Nano
   clones). Measure `factor = real_elapsed_time / timer_indicated_time` against a

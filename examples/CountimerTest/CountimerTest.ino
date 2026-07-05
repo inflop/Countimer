@@ -17,6 +17,7 @@
 Countimer tUp;
 Countimer tDown;
 Countimer tNone;
+Countimer tSubSecond;
 
 void setup()
 {
@@ -38,6 +39,11 @@ void setup()
     // Just call print_none() method every 2s.
 	tNone.setInterval(print_none, 2000);
 
+    // Count-down timer with sub-second precision: 1.5s
+	tSubSecond.setCounter(0, 0, 1, 500, tSubSecond.COUNT_DOWN, tSubSecondComplete);
+    // Call print_time_sub_second() method every 100ms.
+	tSubSecond.setInterval(print_time_sub_second, 100);
+
 	Serial.println("Press one of the keys below and click 'Send':");
 	Serial.println("'S' - to start all timers");
 	Serial.println("'P' - to pause all timers");
@@ -50,6 +56,7 @@ void loop()
 	tUp.run();
 	tDown.run();
 	tNone.run();
+	tSubSecond.run();
 
 	if (Serial.available() > 0)
 	{
@@ -61,21 +68,25 @@ void loop()
 				tUp.stop();
 				tDown.stop();
 				tNone.stop();
+				tSubSecond.stop();
 				break;
 			case 'R':
 				tUp.restart();
 				tDown.restart();
 				tNone.restart();
+				tSubSecond.restart();
 				break;
 			case 'S':
 				tUp.start();
 				tDown.start();
 				tNone.start();
+				tSubSecond.start();
 				break;
 			case 'P':
 				tUp.pause();
 				tDown.pause();
 				tNone.pause();
+				tSubSecond.pause();
 				break;
 			default:
 				break;
@@ -101,6 +112,12 @@ void print_none()
 	Serial.println(millis());
 }
 
+void print_time_sub_second()
+{
+	Serial.print("tSubSecond: ");
+	Serial.println(tSubSecond.getCurrentTimeWithMillis());
+}
+
 void tUpComplete()
 {
 	digitalWrite(LED_BUILTIN, HIGH);
@@ -109,4 +126,9 @@ void tUpComplete()
 void tDownComplete()
 {
 	digitalWrite(LED_BUILTIN, LOW);
+}
+
+void tSubSecondComplete()
+{
+	Serial.println("tSubSecond: complete!");
 }

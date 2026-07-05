@@ -7,7 +7,9 @@ setCalibration	KEYWORD2
 getCurrentHours	KEYWORD2
 getCurrentMinutes	KEYWORD2
 getCurrentSeconds	KEYWORD2
+getCurrentMilliseconds	KEYWORD2
 getCurrentTime	KEYWORD2
+getCurrentTimeWithMillis	KEYWORD2
 isCounterCompleted	KEYWORD2
 isCounterRunning	KEYWORD2
 isStopped	KEYWORD2

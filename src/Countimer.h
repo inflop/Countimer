@@ -9,6 +9,7 @@
 
 #define COUNTIMER_MAX_HOURS 999
 #define COUNTIMER_MAX_MINUTES_SECONDS 59
+#define COUNTIMER_MAX_MILLISECONDS 999
 
 typedef void(*timer_callback)(void);
 
@@ -25,8 +26,14 @@ public:
 	// Set up counter time(hours, minutes, seconds), count mode and function to execute if count is completed.
 	void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete);
 
+	// Set up counter time(hours, minutes, seconds, milliseconds), count mode and function to execute if count is completed.
+	void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds, CountType countType, timer_callback onComplete);
+
 	// Set up counter time(hours, minutes, seconds) for existing timer.
 	void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds);
+
+	// Set up counter time(hours, minutes, seconds, milliseconds) for existing timer.
+	void setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds);
 
 	// Returns timer's current hours.
 	uint16_t getCurrentHours() const;
@@ -37,6 +44,9 @@ public:
 	// Returns timer's current seconds.
 	uint8_t getCurrentSeconds() const;
 
+	// Returns timer's current milliseconds (0-999).
+	uint16_t getCurrentMilliseconds() const;
+
 	void setInterval(timer_callback callback, uint32_t interval);
 
 	// Set correction factor for hardware millis() drift, e.g. from ceramic resonator tolerance.
@@ -45,6 +55,9 @@ public:
 
 	// Returns current timer as formatted string HH:MM:SS
 	char* getCurrentTime();
+
+	// Returns current timer as formatted string HH:MM:SS.mmm
+	char* getCurrentTimeWithMillis();
 
 	// Returns true if counter is completed, otherwise returns false.
 	bool isCounterCompleted() const;
@@ -105,6 +118,7 @@ private:
 	bool _isCounterCompleted = false;
 	bool _isStopped = true;
 	char _formatted_time[10];
+	char _formatted_time_ms[13];
 	CountType _countType = COUNT_NONE;
 };
 
