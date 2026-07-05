@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.0] - 2026-07-05
 
-### Added
-
 ### Fixed
 
 - **Counting drift accumulating over long count times.** The counter now advances by the
@@ -39,6 +37,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `getCurrentMilliseconds()` and `getCurrentTimeWithMillis()` (formatted
   `HH:MM:SS.mmm`) read it back. Existing overloads and `getCurrentTime()` are unchanged.
   (#15)
+- `reset()` — restore the counter to its initial time and leave the timer stopped
+  (not completed), ready to be started again with `start()`. Fills the gap between
+  `restart()` (reset + start) and `stop()` (reset + mark completed); behaves uniformly
+  across `COUNT_UP` / `COUNT_DOWN` / `COUNT_NONE`. `restart()` is now built on it.
+  (#17)
 - `setCalibration(float factor)` — optional one-time, per-board correction of hardware
   `millis()` drift (e.g. ceramic resonator tolerance, up to ~0.5% on many Uno/Nano
   clones). Measure `factor = real_elapsed_time / timer_indicated_time` against a
