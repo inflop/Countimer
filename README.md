@@ -37,6 +37,11 @@ arduino-cli lib install Countimer
 **Manually:** download this repository and place it in your Arduino `libraries/` folder
 (e.g. `~/Documents/Arduino/libraries/Countimer`), then restart the IDE.
 
+For fast local regression checks, the repository also includes a small host-side test
+binary under `tests/`. See [CONTRIBUTING.md](CONTRIBUTING.md#building-and-testing) for
+the exact commands on Linux/macOS and Windows, then verify the Arduino examples as the
+next step.
+
 ## Quick start
 
 A 10-second count-down that prints the remaining time every second:

@@ -23,7 +23,21 @@ while [ "$#" -gt 0 ]; do
 done
 
 if ! command -v arduino-cli >/dev/null 2>&1; then
-    echo "error: arduino-cli not found on PATH (see .claude/skills/verify-examples for install steps)" >&2
+    # Try common install locations before giving up.
+    for candidate in \
+        "$HOME/bin/arduino-cli" \
+        "$HOME/.local/bin/arduino-cli" \
+        "/usr/local/bin/arduino-cli"
+    do
+        if [ -x "$candidate" ]; then
+            export PATH="$(dirname "$candidate"):$PATH"
+            break
+        fi
+    done
+fi
+
+if ! command -v arduino-cli >/dev/null 2>&1; then
+    echo "error: arduino-cli not found on PATH (see CONTRIBUTING.md for install steps)" >&2
     exit 1
 fi
 

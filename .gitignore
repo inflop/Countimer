@@ -2,3 +2,4 @@
 .pioenvs/
 .piolibdeps/
 examples/*/build/
+tests/build/

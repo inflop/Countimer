@@ -127,7 +127,7 @@ private:
 	bool _isCounterCompleted = false;
 	bool _isStopped = true;
 	char _formatted_time[10];
-	char _formatted_time_ms[13];
+	char _formatted_time_ms[14];
 	CountType _countType = COUNT_NONE;
 };
 

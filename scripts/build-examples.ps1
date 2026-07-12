@@ -20,7 +20,21 @@ $RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $ExamplesDir = Join-Path $RepoRoot "examples"
 
 if (-not (Get-Command arduino-cli -ErrorAction SilentlyContinue)) {
-    Write-Error "arduino-cli not found on PATH (see .claude/skills/verify-examples for install steps)"
+    # PATH may not be reloaded in the current session after installation;
+    # try known install locations before giving up.
+    $candidates = @(
+        "$env:LOCALAPPDATA\Arduino CLI",
+        "$env:ProgramFiles\Arduino CLI",
+        "${env:ProgramFiles(x86)}\Arduino CLI"
+    )
+    $found = $candidates | Where-Object { Test-Path "$_\arduino-cli.exe" } | Select-Object -First 1
+    if ($found) {
+        $env:PATH += ";$found"
+    }
+}
+
+if (-not (Get-Command arduino-cli -ErrorAction SilentlyContinue)) {
+    Write-Error "arduino-cli not found on PATH (see CONTRIBUTING.md for install steps)"
     exit 1
 }
 

@@ -4,11 +4,12 @@ This file provides guidance to coding agents (e.g., Claude Code at claude.ai/cod
 
 ## What this is
 
-Countimer is a single-class Arduino library (`category=Timing`) for non-blocking timers and counters. The entire implementation is `src/Countimer.h` / `src/Countimer.cpp`. There is no host-side build, test runner, or CI — it is consumed as an Arduino IDE library.
+Countimer is a single-class Arduino library (`category=Timing`) for non-blocking timers and counters. The entire implementation is `src/Countimer.h` / `src/Countimer.cpp`.
 
 ## Building / testing
 
-- No standalone build. Verify changes by compiling an example sketch with the Arduino toolchain, e.g.:
+- Host-side regression tests live under `tests/` and run in CI with a small Arduino shim.
+- Verify library changes by running the host tests on a PC and by compiling an example sketch with the Arduino toolchain, e.g.:
   `arduino-cli compile --fqbn arduino:avr:uno examples/CountimerTest/CountimerTest.ino`
   (requires the library be findable — run from a checkout placed under the Arduino `libraries/` folder, or use `--library .`).
 - `scripts/build-examples.sh` (Linux) and `scripts/build-examples.ps1` (Windows) wrap this: run with

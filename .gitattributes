@@ -1,11 +1,14 @@
 # Excluded from the GitHub archive that Arduino Library Manager downloads for a tag
 # (git archive / codeload honors export-ignore; .gitignore does not apply here since
 # these files are tracked). Keeps the distributed library zip to just the sketch code.
-/.github/** export-ignore
-/.claude/** export-ignore
-/scripts/** export-ignore
-/CONTRIBUTING.md export-ignore
+/.github export-ignore
+/.claude export-ignore
+/scripts export-ignore
+/tests export-ignore
+/AGENTS.md export-ignore
 /CLAUDE.md export-ignore
+/CONTRIBUTING.md export-ignore
 /.gitattributes export-ignore
+/.gitignore export-ignore
 examples/*/wokwi.toml export-ignore
 examples/*/diagram.json export-ignore

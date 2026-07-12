@@ -49,8 +49,104 @@ Also add an entry to `CHANGELOG.md` (the format follows
 
 ### Building and testing
 
-There is no host-side build or unit test runner — the library is verified by
-compiling the example sketches:
+The repository includes a small host-side regression test binary under `tests/`.
+Use it for fast local checks on a machine with a native C++ compiler, then verify
+the Arduino examples as a separate step.
+
+#### Run the host tests locally
+
+From the repository root:
+
+**Linux/macOS:**
+
+```sh
+mkdir -p tests/build
+g++ -DARDUINO=100 -std=c++11 -Wall -Wextra -Werror -I tests/support -I src tests/CountimerHostTests.cpp src/Countimer.cpp -o tests/build/countimer-host-tests
+./tests/build/countimer-host-tests
+```
+
+**Windows:** use a lightweight toolchain such as **MSYS2 + MinGW-w64**. Install MSYS2,
+open the **MSYS2 MinGW x64** shell, then run:
+
+```sh
+mkdir -p tests/build
+g++ -DARDUINO=100 -std=c++11 -Wall -Wextra -Werror -I tests/support -I src tests/CountimerHostTests.cpp src/Countimer.cpp -o tests/build/countimer-host-tests.exe
+./tests/build/countimer-host-tests.exe
+```
+
+If you prefer another compiler, any setup that provides a working C++ compiler and the
+standard library headers will do — the tests do not depend on Visual Studio itself.
+
+#### How to install MSYS2 on Windows
+
+MSYS2 ships its own package manager, `pacman`. That command works only inside an MSYS2
+shell, not in normal PowerShell or `cmd.exe`.
+
+1. Download and install MSYS2 from https://www.msys2.org/.
+2. Open the **MSYS2 MinGW x64** shell from the Start menu.
+3. Update the package database and the base system:
+
+   ```sh
+   pacman -Syu
+   ```
+
+   If MSYS2 asks you to close the shell and reopen it, do that and run the same command
+   once more.
+4. Install the MinGW-w64 compiler toolchain:
+
+   ```sh
+   pacman -S --needed mingw-w64-x86_64-gcc
+   ```
+
+5. Stay in the same MSYS2 MinGW x64 shell and run the host-test commands from above.
+
+The host tests cover the core timing logic, pause/resume, calibration, millis()
+wraparound, and the count-up overflow regression.
+
+#### How to install arduino-cli
+
+**Linux/macOS:**
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+```
+
+This installs the binary to `./bin/arduino-cli`. Move it to a directory on your `PATH`
+(e.g. `/usr/local/bin`) if you want to call it without a full path.
+
+**Windows (PowerShell):**
+
+```powershell
+(New-Object Net.WebClient).DownloadFile("https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Windows_64bit.zip", "$env:TEMP\arduino-cli.zip")
+Expand-Archive "$env:TEMP\arduino-cli.zip" -DestinationPath "$env:LOCALAPPDATA\Arduino CLI"
+[Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";$env:LOCALAPPDATA\Arduino CLI", "User")
+```
+
+Then reload `PATH` in the current session (or open a new shell):
+
+```powershell
+$env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH","Machine")
+```
+
+After installation, install the AVR core (needed to compile `arduino:avr:uno` examples):
+
+```sh
+arduino-cli core update-index
+arduino-cli core install arduino:avr
+```
+
+For the ESP32 examples, also run:
+
+```sh
+arduino-cli core install esp32:esp32 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+```
+
+Official docs and alternative installation methods: https://arduino.github.io/arduino-cli/
+
+#### Compile the Arduino examples
+
+After the host tests pass, verify the example sketches by compiling them with the
+Arduino toolchain:
 
 ```sh
 arduino-cli compile --fqbn arduino:avr:uno --library . examples/Basic

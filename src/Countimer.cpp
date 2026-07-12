@@ -1,5 +1,21 @@
 #include "Countimer.h"
 
+namespace
+{
+	void writeTwoDigits(char *destination, uint8_t value)
+	{
+		destination[0] = (char)('0' + (value / 10));
+		destination[1] = (char)('0' + (value % 10));
+	}
+
+	void writeThreeDigits(char *destination, uint16_t value)
+	{
+		destination[0] = (char)('0' + (value / 100));
+		destination[1] = (char)('0' + ((value / 10) % 10));
+		destination[2] = (char)('0' + (value % 10));
+	}
+}
+
 void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, CountType countType, timer_callback onComplete)
 {
 	setCounter(hours, minutes, seconds, 0, countType, onComplete);
@@ -19,19 +35,23 @@ void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds)
 
 void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds)
 {
-	if (hours > COUNTIMER_MAX_HOURS) {
+	if (hours > COUNTIMER_MAX_HOURS)
+	{
 		hours = COUNTIMER_MAX_HOURS;
 	}
 
-	if (minutes > COUNTIMER_MAX_MINUTES_SECONDS) {
+	if (minutes > COUNTIMER_MAX_MINUTES_SECONDS)
+	{
 		minutes = COUNTIMER_MAX_MINUTES_SECONDS;
 	}
 
-	if (seconds > COUNTIMER_MAX_MINUTES_SECONDS) {
+	if (seconds > COUNTIMER_MAX_MINUTES_SECONDS)
+	{
 		seconds = COUNTIMER_MAX_MINUTES_SECONDS;
 	}
 
-	if (milliseconds > COUNTIMER_MAX_MILLISECONDS) {
+	if (milliseconds > COUNTIMER_MAX_MILLISECONDS)
+	{
 		milliseconds = COUNTIMER_MAX_MILLISECONDS;
 	}
 
@@ -45,7 +65,6 @@ void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, uin
 	}
 
 	_startCountTime = _currentCountTime;
-
 }
 
 void Countimer::setInterval(timer_callback callback, uint32_t interval)
@@ -79,17 +98,36 @@ uint16_t Countimer::getCurrentMilliseconds() const
 	return _currentCountTime % Countimer::MS_PER_SECOND;
 }
 
-char* Countimer::getCurrentTime()
+char *Countimer::getCurrentTime()
 {
-	snprintf(_formatted_time, sizeof(_formatted_time), "%02u:%02u:%02u",
-		(unsigned int)getCurrentHours(), (unsigned int)getCurrentMinutes(), (unsigned int)getCurrentSeconds());
+	uint16_t hours = getCurrentHours();
+	uint8_t minutes = getCurrentMinutes();
+	uint8_t seconds = getCurrentSeconds();
+
+	writeThreeDigits(_formatted_time, hours);
+	_formatted_time[3] = ':';
+	writeTwoDigits(_formatted_time + 4, minutes);
+	_formatted_time[6] = ':';
+	writeTwoDigits(_formatted_time + 7, seconds);
+	_formatted_time[9] = '\0';
 	return _formatted_time;
 }
 
-char* Countimer::getCurrentTimeWithMillis()
+char *Countimer::getCurrentTimeWithMillis()
 {
-	snprintf(_formatted_time_ms, sizeof(_formatted_time_ms), "%02u:%02u:%02u.%03u",
-		(unsigned int)getCurrentHours(), (unsigned int)getCurrentMinutes(), (unsigned int)getCurrentSeconds(), (unsigned int)getCurrentMilliseconds());
+	uint16_t hours = getCurrentHours();
+	uint8_t minutes = getCurrentMinutes();
+	uint8_t seconds = getCurrentSeconds();
+	uint16_t milliseconds = getCurrentMilliseconds();
+
+	writeThreeDigits(_formatted_time_ms, hours);
+	_formatted_time_ms[3] = ':';
+	writeTwoDigits(_formatted_time_ms + 4, minutes);
+	_formatted_time_ms[6] = ':';
+	writeTwoDigits(_formatted_time_ms + 7, seconds);
+	_formatted_time_ms[9] = '.';
+	writeThreeDigits(_formatted_time_ms + 10, milliseconds);
+	_formatted_time_ms[13] = '\0';
 	return _formatted_time_ms;
 }
 
@@ -110,7 +148,7 @@ bool Countimer::isStopped() const
 
 void Countimer::start()
 {
-	if(_isStopped)
+	if (_isStopped)
 	{
 		// Reset the reference point only on a real resume, so paused time
 		// is not counted. start() may be called on every loop() iteration.
@@ -119,7 +157,7 @@ void Countimer::start()
 		_calibrationRemainder = 0.0;
 	}
 
-	if(_isCounterCompleted)
+	if (_isCounterCompleted)
 	{
 		_isCounterCompleted = false;
 	}
@@ -136,7 +174,7 @@ void Countimer::stop()
 	_isCounterCompleted = true;
 	_currentCountTime = _countTime;
 
-	if(_countType == COUNT_UP)
+	if (_countType == COUNT_UP)
 	{
 		_currentCountTime = 0;
 	}
@@ -170,7 +208,8 @@ void Countimer::run()
 	// Unsigned subtraction is safe across millis() overflow (~49 days).
 	uint32_t elapsed = now - _previousMillis;
 
-	if (elapsed >= _interval) {
+	if (elapsed >= _interval)
+	{
 
 		// Move the reference point before running callbacks, so neither the
 		// check overshoot nor the callback execution time is ever lost.
@@ -215,7 +254,7 @@ void Countimer::countDown(uint32_t elapsed)
 
 void Countimer::countUp(uint32_t elapsed)
 {
-	if (_currentCountTime + elapsed < _countTime)
+	if (_countTime - _currentCountTime > elapsed)
 	{
 		// Add the real measured time, not the nominal interval,
 		// so the error does not accumulate over long counts.
@@ -231,12 +270,12 @@ void Countimer::countUp(uint32_t elapsed)
 
 void Countimer::callback()
 {
-	if(_callback != nullptr)
+	if (_callback != nullptr)
 		_callback();
 }
 
 void Countimer::complete()
 {
-	if(_onComplete != nullptr)
+	if (_onComplete != nullptr)
 		_onComplete();
 }

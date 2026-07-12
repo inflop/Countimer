@@ -5,6 +5,18 @@ on:
   pull_request:
 
 jobs:
+  host-tests:
+    name: host tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: build host tests
+        run: |
+          mkdir -p tests/build
+          g++ -DARDUINO=100 -std=c++11 -Wall -Wextra -Werror -I tests/support -I src tests/CountimerHostTests.cpp src/Countimer.cpp -o tests/build/countimer-host-tests
+      - name: run host tests
+        run: ./tests/build/countimer-host-tests
+
   lint:
     name: arduino-lint
     runs-on: ubuntu-latest
