@@ -35,7 +35,7 @@ void Countimer::setCounter(uint16_t hours, uint8_t minutes, uint8_t seconds, uin
 		milliseconds = COUNTIMER_MAX_MILLISECONDS;
 	}
 
-	_currentCountTime = ((hours * 3600L) + (minutes * 60L) + seconds) * 1000L + milliseconds;
+	_currentCountTime = ((hours * Countimer::SEC_PER_HOUR) + (minutes * Countimer::SEC_PER_MINUTE) + seconds) * Countimer::MS_PER_SECOND + milliseconds;
 	_countTime = _currentCountTime;
 
 	if (_countType == COUNT_UP)
@@ -61,22 +61,22 @@ void Countimer::setCalibration(float factor)
 
 uint16_t Countimer::getCurrentHours() const
 {
-	return _currentCountTime / 1000 / 3600;
+	return _currentCountTime / Countimer::MS_PER_SECOND / Countimer::SEC_PER_HOUR;
 }
 
 uint8_t Countimer::getCurrentMinutes() const
 {
-	return _currentCountTime / 1000 % 3600 / 60;
+	return _currentCountTime / Countimer::MS_PER_SECOND % Countimer::SEC_PER_HOUR / Countimer::SEC_PER_MINUTE;
 }
 
 uint8_t Countimer::getCurrentSeconds() const
 {
-	return _currentCountTime / 1000 % 60;
+	return _currentCountTime / Countimer::MS_PER_SECOND % Countimer::SEC_PER_MINUTE;
 }
 
 uint16_t Countimer::getCurrentMilliseconds() const
 {
-	return _currentCountTime % 1000;
+	return _currentCountTime % Countimer::MS_PER_SECOND;
 }
 
 char* Countimer::getCurrentTime()

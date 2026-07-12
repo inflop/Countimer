@@ -7,10 +7,6 @@
 #include <WProgram.h>
 #endif
 
-#define COUNTIMER_MAX_HOURS 999
-#define COUNTIMER_MAX_MINUTES_SECONDS 59
-#define COUNTIMER_MAX_MILLISECONDS 999
-
 typedef void(*timer_callback)(void);
 
 class Countimer
@@ -90,6 +86,14 @@ public:
 	void reset();
 
 private:
+	static constexpr uint16_t COUNTIMER_MAX_HOURS = 999;
+	static constexpr uint8_t COUNTIMER_MAX_MINUTES_SECONDS = 59;
+	static constexpr uint16_t COUNTIMER_MAX_MILLISECONDS = 999;
+
+	static constexpr uint32_t MS_PER_SECOND = 1000UL;
+	static constexpr uint32_t SEC_PER_MINUTE = 60UL;
+	static constexpr uint32_t SEC_PER_HOUR = 3600UL;
+
 	// Counting down timer by measured elapsed milliseconds.
 	void countDown(uint32_t elapsed);
 
